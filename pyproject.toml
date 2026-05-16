@@ -1,0 +1,79 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "batch-benchmark"
+version = "0.1.0"
+description = "Controlled benchmark of dlt pipeline performance across batch sizes (modern data stack portfolio project)"
+readme = "README.md"
+requires-python = ">=3.10,<3.13"
+license = { text = "MIT" }
+authors = [{ name = "Portfolio Author" }]
+keywords = ["dlt", "dagster", "dbt", "duckdb", "benchmark", "data-engineering"]
+
+# NOTE: Versions are pinned for reproducibility against the modern data stack
+# as of early 2026. If `pip install` reports a resolver conflict on your
+# machine, relax the pin on the offending package to a compatible range and
+# re-run `make setup`. The dagster core / dagster-* library versions MUST stay
+# in lockstep (1.9.x core <-> 0.25.x libraries).
+dependencies = [
+    # --- Ingestion -------------------------------------------------------
+    "dlt[duckdb]==1.6.1",
+    # --- Orchestration ---------------------------------------------------
+    "dagster==1.9.8",
+    "dagster-webserver==1.9.8",
+    "dagster-dlt==0.25.8",
+    "dagster-dbt==0.25.8",
+    # --- Transformation --------------------------------------------------
+    "dbt-core==1.9.1",
+    "dbt-duckdb==1.9.1",
+    # --- Storage / analytics --------------------------------------------
+    "duckdb==1.1.3",
+    "pandas==2.2.3",
+    # --- Visualization ---------------------------------------------------
+    "streamlit==1.40.2",
+    "plotly==5.24.1",
+    # --- Data generation & monitoring -----------------------------------
+    "faker==33.1.0",
+    "psutil==6.1.0",
+    # --- Config ----------------------------------------------------------
+    "python-dotenv==1.0.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==8.3.4",
+    "pytest-cov==6.0.0",
+    "ruff==0.8.4",
+    "mypy==1.13.0",
+    "jupyter==1.1.1",
+]
+
+[tool.setuptools]
+packages = [
+    "dagster_project",
+    "dlt_pipelines",
+]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+addopts = "-q --strict-markers"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "D"]
+ignore = ["D203", "D213"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.mypy]
+python_version = "3.10"
+warn_unused_ignores = true
+disallow_untyped_defs = true
+ignore_missing_imports = true

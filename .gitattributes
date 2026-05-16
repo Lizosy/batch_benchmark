@@ -1,0 +1,15 @@
+# Normalize line endings: keep the repo LF, let Windows check out CRLF.
+* text=auto eol=lf
+
+# Files that must stay LF even on Windows checkout.
+*.sh        text eol=lf
+Makefile    text eol=lf
+Dockerfile  text eol=lf
+
+# Treat notebooks/data as text but don't try to merge them.
+*.ipynb     text eol=lf -merge
+
+# Binary artifacts (never normalize / diff).
+*.duckdb    binary
+*.png       binary
+*.jpg       binary

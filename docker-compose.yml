@@ -1,0 +1,52 @@
+# One command to bring the whole stack up:  docker compose up --build
+#
+#   - dagster-webserver : UI for launching/inspecting the benchmark sweep   :3000
+#   - dagster-daemon    : runs schedules + queued runs
+#   - streamlit         : analysis dashboard                                 :8501
+#
+# All three share the same image and the same ./data volume so the DuckDB
+# file written by the benchmark is the exact file the dashboard reads.
+
+name: batch-benchmark
+
+x-common: &common
+  build:
+    context: .
+    dockerfile: Dockerfile
+  image: batch-benchmark:latest
+  env_file:
+    - .env
+  volumes:
+    - ./:/app
+    - dagster_home:/opt/dagster/dagster_home
+  working_dir: /app
+
+services:
+  dagster-webserver:
+    <<: *common
+    container_name: bb-dagster-webserver
+    command: >
+      dagster-webserver -h 0.0.0.0 -p 3000
+      -m dagster_project.definitions
+    ports:
+      - "3000:3000"
+    depends_on:
+      - dagster-daemon
+
+  dagster-daemon:
+    <<: *common
+    container_name: bb-dagster-daemon
+    command: dagster-daemon run -m dagster_project.definitions
+    restart: on-failure
+
+  streamlit:
+    <<: *common
+    container_name: bb-streamlit
+    command: >
+      streamlit run dashboard/streamlit_app.py
+      --server.port 8501 --server.address 0.0.0.0
+    ports:
+      - "8501:8501"
+
+volumes:
+  dagster_home:
