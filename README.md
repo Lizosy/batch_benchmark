@@ -215,4 +215,39 @@ batch_benchmark/
 
 ---
 
+## 11. อ่านอ้างอิงมาก่อน (References / Further Reading)
+
+ก่อนทำโปรเจกต์นี้ ไปอ่านเอกสาร/บทความพวกนี้มาก่อน แล้วถึงเอา
+สมมติฐานมาทดสอบจริงด้วย benchmark ของตัวเอง (อย่าเชื่อเพราะเขาบอก —
+ลองเองแล้ววัดผล)
+
+**สาย dlt โดยเฉพาะ (เกี่ยวกับ batch / buffer / memory):**
+
+- 📘 [Optimizing dlt — Performance (dlt Docs)](https://dlthub.com/docs/reference/performance)
+  — เอกสารทางการ อธิบาย `buffer_max_items`, `file_max_items`, `file_max_bytes`
+  ที่เป็น knob คุม chunk/หน่วยความจำ → เป็นที่มาของตัวแปร `batch_size` ในโปรเจกต์ (โยง **H1/H2**)
+- 🐛 [dlt Issue #1588 — Document performance tuning for destination memory usage](https://github.com/dlt-hub/dlt/issues/1588)
+  — discussion จริงเรื่อง memory พุ่งตอน load → แรงบันดาลใจสมมติฐาน **H2**
+- 🧩 [dlt — Backfilling in chunks (ตัวอย่างทางการ)](https://dlthub.com/docs/examples/backfill_in_chunks)
+  — pattern การแบ่ง chunk ที่เอามาปรับใช้กับ synthetic source
+- ✍️ [100 Days of DE — Day 92: Performance Tuning & Optimizing dlt Pipelines (Medium)](https://medium.com/towards-data-engineering/100-days-of-data-engineering-day-92-performance-tuning-and-optimizing-dlt-pipelines-0dc3be812351)
+  — มุมมอง practitioner ว่าปรับ buffer แล้ว peak memory ลดจริง (เทียบกับผลเราได้)
+
+**คอนเซปต์ทั่วไป (latency vs throughput trade-off):**
+
+- 🧠 [Latency vs Throughput in System Design (System Design Handbook)](https://www.systemdesignhandbook.com/blog/difference-between-latency-and-throughput-in-system-design/)
+  — พื้นฐานว่าทำไม batch ใหญ่ขึ้นถึง throughput ดีขึ้นแต่ latency แย่ลง → กรอบคิด **H3**
+- 🎓 [Optimizing Latency and Throughput Trade-offs in a Stream Processing System (UC Berkeley, PDF)](https://people.eecs.berkeley.edu/~kubitron/courses/cs262a-F14/projects/reports/project11_report_ver3.pdf)
+  — paper เชิงวิชาการ ยืนยันว่า curve เป็นรูป non-linear ไม่ใช่เส้นตรง (หนุน **H1**)
+- 🔧 [A Guide to Data Pipeline Design: Low-Latency or High-Throughput (Datastreamer)](https://datastreamer.io/a-guide-to-data-pipeline-design-low-latency-or-high-throughput/)
+  — มุม system design ของการเลือก batch window
+- 🚧 [Common ETL Pipeline Bottlenecks and Fixes (Airbyte)](https://airbyte.com/data-engineering-resources/etl-pipeline-bottlenecks-causes-fixes)
+  — checklist bottleneck ที่ใช้ตีความผล benchmark
+
+> สรุปจากที่อ่าน: ทุกแหล่งพูดตรงกันว่า *"batch ใหญ่ขึ้น = throughput ดีขึ้น
+> แต่แลกกับ latency/memory"* และ trade-off นี้ **ไม่ใช่ linear** — โปรเจกต์นี้
+> เลยทำ controlled benchmark เพื่อหา *sweet spot* จริงด้วยตัวเลขของเราเอง
+
+---
+
 _MIT licensed. โปรเจกต์นี้ทำเพื่อเป็น portfolio ด้าน Data Engineering (2026)_
